@@ -31,6 +31,10 @@ const checkCountriesQuantity = req => {
 };
 
 const onInput = input => {
+  if (/[0-9]/.test(input)) {
+    Notiflix.Notify.failure('Please enter correct country name');
+    return;
+  }
   if (input === '') {
     clearResult();
     return;
@@ -63,21 +67,22 @@ const renderOneCountry = req => {
   const element = req
     .map(elem => {
       const svgLink = elem.flags.svg;
-      const name = elem.name.official;
-
-      const languages = () => {
-        return Object.values(elem.languages).toString();
-      };
+      const name = elem.name.common;
+      let languagesList = '';
+      const languagesArr = Object.values(elem.languages);
+      languagesArr.map(element => {
+        if (languagesArr.indexOf(element) === languagesArr.length - 1) {
+          languagesList = languagesList + element;
+          return;
+        }
+        languagesList = languagesList + element + ', ';
+      });
 
       return `<div class="country-info__header"><img src='${svgLink}' alt="country flag"  height='50' width='50' class="country-info__flag" "/> <p class="country-info__name" >${name}</p></div>
        <ul class="country-info__details-list">
-          <li class="detail-list__elem"><span class="detail-list__name" >Capital: </span> <span class="detail-list__value" >${
-            elem.capital
-          }</span></li>
-          <li class="detail-list__elem"><span class="detail-list__name">Population: </span> <span class="detail-list__value">${
-            elem.population
-          }</span></li>
-          <li class="detail-list__elem"><span class="detail-list__name">Languages: </span> <span class="detail-list__value">${languages()}</span></li>
+          <li class="detail-list__elem"><span class="detail-list__name" >Capital: </span> <span class="detail-list__value" >${elem.capital}</span></li>
+          <li class="detail-list__elem"><span class="detail-list__name">Population: </span> <span class="detail-list__value">${elem.population}</span></li>
+          <li class="detail-list__elem"><span class="detail-list__name">Languages: </span> <span class="detail-list__value">${languagesList}</span></li>
        </ul>`;
     })
     .join('');
